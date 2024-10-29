@@ -947,7 +947,7 @@ def main(*args):
         test_name = 'TestProblem' + question
         if test_name in globals():
             test = globals()[test_name]
-            suite = unittest.makeSuite(test)
+            suite = unittest.TestLoader().loadTestsFromTestCase(test)
             runner = unittest.TextTestRunner()
         else:
             print('Question "{0}" not recognized.'.format(args.question),
