@@ -448,19 +448,27 @@ class Water(Place):
     def add_insect(self, insect):
         """Add insect if it is watersafe, otherwise reduce its armor to 0."""
         print('added', insect, insect.watersafe)
+        # Problems A4 begin
         if insect.watersafe == False:
             insect.reduce_armor(insect.armor)
+        # Problems A4 end
 
 class FireAnt(Ant):
     """FireAnt cooks any Bee in its Place when it expires."""
 
     name = 'Fire'
     damage = 3
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost = 4
+    implemented = True
 
     def reduce_armor(self, amount):
-        "*** YOUR CODE HERE ***"
+        # Problem A5 begin
+        firebees = self.place.bees[:]
+        Ant.reduce_armor(self, amount)
+        if self.armor <= 0:
+            for bees in firebees:
+                bees.reduce_armor(self.damage)
+        # Problem A5 end
 
 
 class LongThrower(ThrowerAnt):
