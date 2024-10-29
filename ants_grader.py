@@ -4,7 +4,7 @@ import unittest
 import doctest
 import os
 import sys
-import imp
+import importlib
 from ucb import main
 import ants
 import autograder
@@ -649,7 +649,7 @@ class TestProblem9(AntTest):
                 register_place(exit, step == steps-1)
 
     def setUp(self):
-        imp.reload(ants)
+        importlib.reload(ants)
         hive = ants.Hive(ants.make_test_assault_plan())
         layout = TestProblem9.queen_layout
         self.colony = ants.AntColony(None, hive, ants.ant_types(), layout)
