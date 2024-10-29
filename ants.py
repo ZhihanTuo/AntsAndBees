@@ -179,6 +179,9 @@ class ThrowerAnt(Ant):
     implemented = True
     damage = 1
     food_cost = 4
+    # Default ranges (min = 0, max = 10)
+    min_range = 0
+    max_range = 10
 
     def nearest_bee(self, hive):
         """Return the nearest Bee in a Place that is not the Hive, connected to
@@ -473,21 +476,55 @@ class FireAnt(Ant):
     def reduce_armor(self, amount):
         "*** YOUR CODE HERE ***"
 
-
+# BEGIN Problem B5
 class LongThrower(ThrowerAnt):
     """A ThrowerAnt that only throws leaves at Bees at least 4 places away."""
 
     name = 'Long'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost = 3
+    implemented = True
+    min_range = 4
+
+    def nearest_bee(self, hive):
+        curr_place = self.place
+        # Start after at least 4 Entrance Transitions
+        for i in range(self.min_range):
+            curr_place = curr_place.entrance
+        while (curr_place != hive):
+            if curr_place.bees == []:
+            # Consider next place (entrace of current place) if no bees
+                curr_place = curr_place.entrance
+            else:
+            # Return a random bee if there are any
+                return random_or_none(curr_place.bees)
+        # If no bee was returned, then there is no such bee
+        return None
 
 
 class ShortThrower(ThrowerAnt):
     """A ThrowerAnt that only throws leaves at Bees within 3 places."""
 
     name = 'Short'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost = 3
+    implemented = True
+    max_range = 3
+
+    def nearest_bee(self, hive):
+        curr_place = self.place
+        place_count = 0
+        # Constrained to at most 2 entrance transitions
+        while (curr_place != hive and place_count < self.max_range):
+            if curr_place.bees == []:
+            # Consider next place (entrace of current place) if no bees
+                curr_place = curr_place.entrance
+            else:
+            # Return a random bee if there are any
+                return random_or_none(curr_place.bees)
+            # Increment max_range
+            self.max_range += 1
+        # If no bee was returned, then there is no such bee
+        return None
+# END Problem B5
 
 
 class WallAnt(Ant):
