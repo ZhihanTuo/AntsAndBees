@@ -30,7 +30,7 @@ class Place:
         self.entrance = None  # A Place
         # Phase 1: Add an entrance to the exit
         if exit is not None:
-            self.exist.entrance = self
+            self.exit.entrance = self
 
     def add_insect(self, insect):
         """Add an Insect to this Place.
