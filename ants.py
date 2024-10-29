@@ -67,12 +67,13 @@ class Place:
 
 class Insect:
     """An Insect, the base class of Ant and Bee, has armor and a Place."""
-
+    watersafe = False
+    
     def __init__(self, armor, place=None):
         """Create an Insect with an armor amount and a starting Place."""
         self.armor = armor
         self.place = place  # set by Place.add_insect and Place.remove_insect
-        watersafe = False
+        
 
 
     def reduce_armor(self, amount):
@@ -460,6 +461,7 @@ class Water(Place):
         """Add insect if it is watersafe, otherwise reduce its armor to 0."""
         print('added', insect, insect.watersafe)
         # Problems A4 begin
+        Place.add_insect(self, insect)
         if insect.watersafe == False:
             insect.reduce_armor(insect.armor)
         # Problems A4 end
@@ -498,16 +500,17 @@ class ShortThrower(ThrowerAnt):
     implemented = False
 
 
+# BEGIN problem A6
 class WallAnt(Ant):
     """WallAnt is an Ant which has a large amount of armor."""
 
     name = 'Wall'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost = 4
+    implemented = True
 
-    def __init__(self):
-        "*** YOUR CODE HERE ***"
-        Ant.__init__(self)
+    def __init__(self, armor = 4):
+        Ant.__init__(self, armor)
+# END problem A6
 
 
 class NinjaAnt(Ant):
