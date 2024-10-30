@@ -561,17 +561,13 @@ class NinjaAnt(Ant):
     implemented = True
 
     def action(self, colony):
-<<<<<<< HEAD
         self.armor = 1
         for bees in list(self.place.bees):
             bees.reduce_armor(self.damage)
 # END problem A7
 
-=======
-        "*** YOUR CODE HERE ***"
 
 # BEGIN Problem B6
->>>>>>> 046e2f6d6f9933690cccabcf97d704ec7f167d37
 class ScubaThrower(ThrowerAnt):
     """ScubaThrower is a ThrowerAnt which is watersafe."""
 
