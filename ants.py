@@ -182,6 +182,9 @@ class ThrowerAnt(Ant):
     implemented = True
     damage = 1
     food_cost = 4
+    # Default ranges (min = 0, max = 10)
+    min_range = 0
+    max_range = 10
 
     def nearest_bee(self, hive):
         """Return the nearest Bee in a Place that is not the Hive, connected to
@@ -485,21 +488,55 @@ class FireAnt(Ant):
                 bees.reduce_armor(self.damage)
         # Problem A5 end
 
-
+# BEGIN Problem B5
 class LongThrower(ThrowerAnt):
     """A ThrowerAnt that only throws leaves at Bees at least 4 places away."""
 
     name = 'Long'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost = 3
+    implemented = True
+    min_range = 4
+
+    def nearest_bee(self, hive):
+        curr_place = self.place
+        # Start after at least 4 Entrance Transitions
+        for i in range(self.min_range):
+            curr_place = curr_place.entrance
+        while (curr_place != hive):
+            if curr_place.bees == []:
+            # Consider next place (entrace of current place) if no bees
+                curr_place = curr_place.entrance
+            else:
+            # Return a random bee if there are any
+                return random_or_none(curr_place.bees)
+        # If no bee was returned, then there is no such bee
+        return None
 
 
 class ShortThrower(ThrowerAnt):
     """A ThrowerAnt that only throws leaves at Bees within 3 places."""
 
     name = 'Short'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost = 3
+    implemented = True
+    max_range = 3
+
+    def nearest_bee(self, hive):
+        curr_place = self.place
+        place_count = 0
+        # Constrained to at most 2 entrance transitions
+        while (curr_place != hive and place_count < self.max_range):
+            if curr_place.bees == []:
+            # Consider next place (entrace of current place) if no bees
+                curr_place = curr_place.entrance
+            else:
+            # Return a random bee if there are any
+                return random_or_none(curr_place.bees)
+            # Increment max_range
+            self.max_range += 1
+        # If no bee was returned, then there is no such bee
+        return None
+# END Problem B5
 
 
 # BEGIN problem A6
@@ -526,36 +563,59 @@ class NinjaAnt(Ant):
     implemented = True
 
     def action(self, colony):
+<<<<<<< HEAD
         self.armor = 1
         for bees in list(self.place.bees):
             bees.reduce_armor(self.damage)
 # END problem A7
 
+=======
+        "*** YOUR CODE HERE ***"
+
+# BEGIN Problem B6
+>>>>>>> 046e2f6d6f9933690cccabcf97d704ec7f167d37
 class ScubaThrower(ThrowerAnt):
     """ScubaThrower is a ThrowerAnt which is watersafe."""
 
     name = 'Scuba'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    watersafe = True
+    food_cost = 5
+    implemented = True
+# END Problem B6
 
 
+# BEGIN Problem B7
 class HungryAnt(Ant):
     """HungryAnt will take three "turns" to eat a Bee in the same space as it.
     While eating, the HungryAnt can't eat another Bee.
     """
     name = 'Hungry'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost = 4
+    # Default time to digest a bee = 3
+    time_to_digest = 3
+    implemented = True
 
     def __init__(self):
         Ant.__init__(self)
-        "*** YOUR CODE HERE ***"
+        # Default num of turns left to digest = 0
+        self.digesting = 0
 
     def eat_bee(self, bee):
-        "*** YOUR CODE HERE ***"
+        # Kill the bee and start digesting
+        self.digesting = HungryAnt.time_to_digest
+        bee.reduce_armor(bee.armor)
 
     def action(self, colony):
-        "*** YOUR CODE HERE ***"
+        if self.digesting:
+        # if digesting, use this turn to decrement time left to digest
+            self.digesting -= 1
+        else:
+            # eat a random bee in place if there are bees
+            bee = random_or_none(self.place.bees)
+            while (bee != None):
+                self.eat_bee(bee)
+                bee = random_or_none(self.place.bees)
+# END Problem B7
 
 
 class BodyguardAnt(Ant):
