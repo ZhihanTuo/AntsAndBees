@@ -67,9 +67,11 @@ class Place:
         if not insect.is_ant():
             self.bees.remove(insect)
         else:
+            if type(insect) == QueenAnt and not insect.imposter:
+                return
             assert self.ant == insect, '{0} is not in {1}'.format(insect, self)
             # BEGIN Problem 8
-            if insect.ant:
+            if type(insect) == BodyguardAnt and insect.ant:
             # if I contain an ant, that ant takes my place
                 self.ant = insect.ant
             else:
@@ -671,27 +673,78 @@ class QueenPlace:
     (2) The place in which the QueenAnt resides.
     """
     def __init__(self, colony_queen, ant_queen):
-        "*** YOUR CODE HERE ***"
+        self.colony_queen = colony_queen
+        self.ant_queen = ant_queen
 
     @property
     def bees(self):
-        "*** YOUR CODE HERE ***"
+        return self.colony_queen.bees + self.ant_queen.bees
 
 class QueenAnt(ScubaThrower):
     """The Queen of the colony.  The game is over if a bee enters her place."""
 
     name = 'Queen'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost = 6
+    implemented = True
+    count = 0
+    imposter = False
 
     def __init__(self):
         ScubaThrower.__init__(self, 1)
-        "*** YOUR CODE HERE ***"
+        # Stores already doubled values
+        self.doubled = []
+        # If QueenAnt already exists, current one instantiated is an imposter
+        if QueenAnt.count == 1:
+            self.imposter = True
+        QueenAnt.count += 1
 
     def action(self, colony):
         """A queen ant throws a leaf, but also doubles the damage of ants
         in her tunnel.  Impostor queens do only one thing: die."""
-        "*** YOUR CODE HERE ***"
+        # Imposter queen only dies and does nothing else
+        if self.imposter:
+            self.reduce_armor(self.armor)
+            return
+        # Helper function for doubling an ant's damage
+        def action_helper(curr_place):
+            # exclude QueenAnt
+            if type(curr_place.ant) == QueenAnt:
+                return
+            # if current ant's damage has not been doubled and an ant exists, double and add to doubled list
+            if curr_place.ant not in self.doubled and curr_place.ant is not None:
+                curr_place.ant.damage *= 2
+                self.doubled.append(curr_place.ant)
+            # if current ant is a body guard, also check if its contained ant has had its damage doubled
+                is_bodyguard = curr_place.ant.container
+                if is_bodyguard: 
+                    contained_ant = curr_place.ant.ant
+                    # Exclude QueenAnt from containedAnt
+                    if type(contained_ant) == QueenAnt:
+                        return
+                    # If curr_place.ant is a bodyguard and its contained ant is not in doubled
+                    if contained_ant not in self.doubled:
+                        contained_ant.damage *= 2
+                        self.doubled.append(contained_ant)
+
+        # Throws a leaf
+        ThrowerAnt.action(self, colony)
+        # 
+        colony.queen = QueenPlace(colony.queen, self.place)
+
+        curr_place = self.place
+        exit, entrance = curr_place.exit, curr_place.entrance
+        # Double current place
+        if curr_place != None:
+            action_helper(curr_place)
+        # Iterate exit to exit
+        while exit != None:
+            action_helper(exit)
+            exit = exit.exit
+        # Iterate entrance to entrance
+        while entrance != None:
+            action_helper(entrance)
+            entrance = entrance.entrance
+
 
 class AntRemover(Ant):
     """Allows the player to remove ants from the board in the GUI."""
