@@ -43,9 +43,21 @@ class Place:
         """
         if insect.is_ant():
             # Phase 2: Special handling for BodyguardAnt
-            "*** YOUR CODE HERE ***"
-            assert self.ant is None, 'Two ants in {0}'.format(self)
-            self.ant = insect
+            # BEGIN Problem 8
+            if self.ant is None:
+                self.ant = insect
+            else:
+                if self.ant.can_contain(insect):
+                # if current ant can contain the ant we are trying to add, contain it
+                    self.ant.contain_ant(insect)
+                elif insect.can_contain(self.ant):
+                # if ant we are trying to add can contain the current ant, contain it and set this place's ant to that ant
+                    insect.contain_ant(self.ant)
+                    self.ant = insect
+                else:
+                # neither ant can contain the other
+                    assert self.ant is None, 'Two ants in {0}'.format(self)
+            # END Problem 8
         else:
             self.bees.append(insect)
         insect.place = self
@@ -56,9 +68,13 @@ class Place:
             self.bees.remove(insect)
         else:
             assert self.ant == insect, '{0} is not in {1}'.format(insect, self)
-            "*** YOUR CODE HERE ***"
-            self.ant = None
-
+            # BEGIN Problem 8
+            if insect.ant:
+            # if I contain an ant, that ant takes my place
+                self.ant = insect.ant
+            else:
+                self.ant = None
+            # END Problem 8
         insect.place = None
 
     def __str__(self):
@@ -147,6 +163,10 @@ class Ant(Insect):
     damage = 0
     food_cost = 0
     blocks_path = True
+    # BEGIN Problem 8
+    # All ant types apart from bodyguards are not containers
+    container = False
+    # END Problem 8
 
     def __init__(self, armor=1):
         """Create an Ant with an armor quantity."""
@@ -155,6 +175,15 @@ class Ant(Insect):
     def is_ant(self):
         return True
 
+    # BEGIN Problem 8
+    def can_contain(self, other):
+        """ Can contain ant if: 
+            - I am a container 
+            - I don't currently contain an ant
+            - The ant I am trying to contain is not a container
+        """
+        return self.container and self.ant == None and (not other.container)
+    # END Problem 8
 
 class HarvesterAnt(Ant):
     """HarvesterAnt produces 1 additional food per turn for the colony."""
@@ -611,21 +640,29 @@ class HungryAnt(Ant):
 # END Problem B7
 
 
+# BEGIN Problem 8
 class BodyguardAnt(Ant):
     """BodyguardAnt provides protection to other Ants."""
     name = 'Bodyguard'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    # Is a container
+    container = True
+    food_cost = 4
+    implemented = True
 
     def __init__(self):
         Ant.__init__(self, 2)
         self.ant = None  # The Ant hidden in this bodyguard
 
+    # contain another ant inside me
     def contain_ant(self, ant):
-        "*** YOUR CODE HERE ***"
+        self.ant = ant
 
     def action(self, colony):
-        "*** YOUR CODE HERE ***"
+        # If I have an ant, the ant keeps its action
+        if self.ant:
+            self.ant.action(colony)
+# END Problem 8
+
 
 class QueenPlace:
     """A place that represents both places in which the bees find the queen.
