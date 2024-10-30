@@ -706,7 +706,7 @@ class QueenAnt(ScubaThrower):
             self.reduce_armor(self.armor)
             return
         # Helper function for doubling an ant's damage
-        def action_helper(curr_place):
+        def double_damage(curr_place):
             # exclude QueenAnt
             if type(curr_place.ant) == QueenAnt:
                 return
@@ -728,21 +728,24 @@ class QueenAnt(ScubaThrower):
 
         # Throws a leaf
         ThrowerAnt.action(self, colony)
-        # 
+        # Sets colony queen to QueenPlace
         colony.queen = QueenPlace(colony.queen, self.place)
-
+        """
+        Iterate through all the places
+        Doubles damage if there is an ant there that is not the queen
+        """
         curr_place = self.place
         exit, entrance = curr_place.exit, curr_place.entrance
         # Double current place
         if curr_place != None:
-            action_helper(curr_place)
+            double_damage(curr_place)
         # Iterate exit to exit
         while exit != None:
-            action_helper(exit)
+            double_damage(exit)
             exit = exit.exit
         # Iterate entrance to entrance
         while entrance != None:
-            action_helper(entrance)
+            double_damage(entrance)
             entrance = entrance.entrance
 
 
