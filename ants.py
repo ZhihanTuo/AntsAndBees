@@ -561,7 +561,6 @@ class NinjaAnt(Ant):
     implemented = True
 
     def action(self, colony):
-        self.armor = 1
         for bees in list(self.place.bees):
             bees.reduce_armor(self.damage)
 # END problem A7
