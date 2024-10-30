@@ -202,10 +202,8 @@ class ThrowerAnt(Ant):
             # Consider next place (entrace of current place) if no bees
                 curr_place = curr_place.entrance
             else:
-            # Return a random bee if there are any
+            # Return a random bee if there are any, otherwise returns None if there aren't
                 return random_or_none(curr_place.bees)
-        # If no bee was returned, then there is no such bee
-        return None
         # END Problem B4
 
     def throw_at(self, target):
