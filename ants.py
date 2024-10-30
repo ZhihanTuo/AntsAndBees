@@ -561,32 +561,49 @@ class NinjaAnt(Ant):
     def action(self, colony):
         "*** YOUR CODE HERE ***"
 
-
+# BEGIN Problem B6
 class ScubaThrower(ThrowerAnt):
     """ScubaThrower is a ThrowerAnt which is watersafe."""
 
     name = 'Scuba'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    watersafe = True
+    food_cost = 5
+    implemented = True
+# END Problem B6
 
 
+# BEGIN Problem B7
 class HungryAnt(Ant):
     """HungryAnt will take three "turns" to eat a Bee in the same space as it.
     While eating, the HungryAnt can't eat another Bee.
     """
     name = 'Hungry'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost = 4
+    # Default time to digest a bee = 3
+    time_to_digest = 3
+    implemented = True
 
     def __init__(self):
         Ant.__init__(self)
-        "*** YOUR CODE HERE ***"
+        # Default num of turns left to digest = 0
+        self.digesting = 0
 
     def eat_bee(self, bee):
-        "*** YOUR CODE HERE ***"
+        # Kill the bee and start digesting
+        self.digesting = HungryAnt.time_to_digest
+        bee.reduce_armor(bee.armor)
 
     def action(self, colony):
-        "*** YOUR CODE HERE ***"
+        if self.digesting:
+        # if digesting, use this turn to decrement time left to digest
+            self.digesting -= 1
+        else:
+            # eat a random bee in place if there are bees
+            bee = random_or_none(self.place.bees)
+            while (bee != None):
+                self.eat_bee(bee)
+                bee = random_or_none(self.place.bees)
+# END Problem B7
 
 
 class BodyguardAnt(Ant):
