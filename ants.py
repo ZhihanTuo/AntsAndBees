@@ -666,6 +666,7 @@ class BodyguardAnt(Ant):
 # END Problem 8
 
 
+# START Problem 9
 class QueenPlace:
     """A place that represents both places in which the bees find the queen.
 
@@ -747,6 +748,7 @@ class QueenAnt(ScubaThrower):
         while entrance != None:
             double_damage(entrance)
             entrance = entrance.entrance
+# END Problem 9
 
 
 class AntRemover(Ant):
